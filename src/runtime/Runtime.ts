@@ -140,7 +140,6 @@ export class RuntimeClass {
   // fetch new IDs from the backend
   // these IDs will be assigned to dragged elements etc.
   private async fetchIDs(size: number) {
-    const uri = `${backendUrl}/uuid?size=${size}`;
     const uris = await getIDPool(size);
     return uris;
   }
