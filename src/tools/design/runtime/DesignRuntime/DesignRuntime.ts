@@ -282,6 +282,14 @@ class DesignRuntimeClass {
   }
   public populateCanvas() {
     // TODO: put reverse into a different function
+    // Create a reverse mapping of this.state
+    const reverse_mapped = this.reverseMapping();
+
+    this.__populateCanvas("root", reverse_mapped);
+  }
+
+  // This Function will Reverse map the State and Parents would become keys and Children woud be their values.
+  private reverseMapping() {
     const r: { [parent: string]: string[] } = {};
     for (const [key, value] of Object.entries(this.state)) {
       const parent = value.state.parent;
@@ -290,12 +298,14 @@ class DesignRuntimeClass {
       }
       r[parent].push(key);
     }
-    this.traverseState("root", r);
+    return r;
   }
-  private traverseState(
+  // This method is a helper function which will populate the canvas
+  private __populateCanvas(
     currNode: string,
     mapping: { [parent: string]: string[] }
   ) {
+    // This method will traverse through the Reverse Mapped Tree.
     const ar = mapping[currNode];
     if (!ar) {
       return;
@@ -307,7 +317,7 @@ class DesignRuntimeClass {
         next: (v) => {
           if (v.type === DEV_ELEMENT_RENDERED && v.payload === value) {
             subscription.unsubscribe();
-            this.traverseState(value, mapping);
+            this.__populateCanvas(value, mapping);
           }
         },
       });
